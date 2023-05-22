@@ -131,6 +131,11 @@ class CSVParser:
         except Exception as e:
             print(f'An error occurred while parsing the CSV file: {e}')
 
+
+class Grapher:
+    def __init__(self, buffer):
+        self.buffer = buffer
+
     def draw_graph(self):
         if not self.buffer:
             print('No data in the buffer. Please parse a CSV file first.')
@@ -145,8 +150,7 @@ class CSVParser:
 
         print('Graph:')
         for row in self.buffer:
-            graph_row = ''.join(['-' * (value - min_value + 1)
-                                for value in row])
+            graph_row = ''.join(['-' * (value - min_value + 1) for value in row])
             print(graph_row)
 
 
@@ -157,14 +161,16 @@ if __name__ == "__main__":
     uploaded_fn = 'uploaded_file.csv'
     csv_file = os.path.join(os.getcwd(), uploaded_fn)
     destination_folder_name = 'MyUploads'
+
     uploader = GoogleDriveUploader(credentials_file)
     folder_id = uploader.create_folder(destination_folder_name)
     file_id = uploader.upload_file(csv_file, uploaded_fn, folder_id)
     downloaded_fn = "downloaded_file.csv"
     uploader.write_file_contents(
         uploader.get_file_contents(uploaded_fn), downloaded_fn)
-    # uploader.print_file_contents(uploaded_fn)
 
     parser = CSVParser(downloaded_fn)
     parser.parse_csv()
-    parser.draw_graph()
+
+    grapher = Grapher(parser.buffer)
+    grapher.draw_graph()
