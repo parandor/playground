@@ -125,7 +125,9 @@ class CSVParser:
                             parsed_row.append(int(value.strip(',')))
                         except ValueError:
                             pass  # Skip non-numeric values
-                    self.buffer.append(parsed_row)
+                    if len(parsed_row) >= 1:
+                        # Append first number found only
+                        self.buffer.append(parsed_row[0])
         except FileNotFoundError:
             print(f'CSV file not found: {self.file_path}')
         except Exception as e:
@@ -137,21 +139,40 @@ class Grapher:
         self.buffer = buffer
 
     def draw_graph(self):
-        if not self.buffer:
-            print('No data in the buffer. Please parse a CSV file first.')
-            return
+        min_value = min(self.buffer)
+        for value in self.buffer:
+            hyphens = '-' * int(value - min_value + 1)
+            print(hyphens)
 
-        flattened_buffer = [value for row in self.buffer for value in row]
-        if not flattened_buffer:
-            print('No values in the buffer. Unable to draw the graph.')
-            return
 
-        min_value = min(flattened_buffer)
+class PeakDetector:
+    def __init__(self, series):
+        self.series = series
+        # print(series)
 
-        print('Graph:')
-        for row in self.buffer:
-            graph_row = ''.join(['-' * (value - min_value + 1) for value in row])
-            print(graph_row)
+    def apply_moving_average(self, window_size=3):
+        smoothed_series = []
+        for i in range(len(self.series)):
+            window_start = max(0, i - window_size + 1)
+            window_end = i + 1
+            window_values = [item for item in self.series[window_start:window_end]]
+            window_average = sum(window_values) / len(window_values)
+            smoothed_series.append(window_average)
+        return smoothed_series
+
+    def find_peaks(self):
+        peaks = []
+        for i in range(1, len(self.series) - 1):
+            if self.series[i] > self.series[i - 1] and self.series[i] > self.series[i + 1]:
+                peaks.append(self.series[i])
+        return peaks
+
+    def find_troughs(self):
+        troughs = []
+        for i in range(1, len(self.series) - 1):
+            if self.series[i] < self.series[i - 1] and self.series[i] < self.series[i + 1]:
+                troughs.append(self.series[i])
+        return troughs
 
 
 if __name__ == "__main__":
@@ -172,5 +193,18 @@ if __name__ == "__main__":
     parser = CSVParser(downloaded_fn)
     parser.parse_csv()
 
+    # print(parser.buffer)
     grapher = Grapher(parser.buffer)
     grapher.draw_graph()
+
+    peak_detector = PeakDetector(parser.buffer)
+    smoothed_numbers = peak_detector.apply_moving_average(window_size=3)
+    peak_values = peak_detector.find_peaks()
+    trough_values = peak_detector.find_troughs()
+
+    print("Smoothed Numbers:", smoothed_numbers)
+    print("Peaks:", peak_values)
+    print("Troughs:", trough_values)
+
+    sgrapher = Grapher(smoothed_numbers)
+    sgrapher.draw_graph()
