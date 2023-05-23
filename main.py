@@ -7,7 +7,7 @@ from google.oauth2 import service_account
 from googleapiclient.errors import HttpError
 
 
-class GoogleDriveUploader:
+class GoogleCloudInterface:
     def __init__(self, credentials_file):
         self.credentials_file = credentials_file
         self.drive_service = self._build_drive_service()
@@ -100,13 +100,17 @@ class GoogleDriveUploader:
     def print_file_contents(self, file_name):
         print(self.get_file_contents(file_name))
 
-    def write_file_contents(self, file_contents, filename):
+
+class IOHandler:
+    @staticmethod
+    def write_file_contents(filename, contents):
         try:
             with open(filename, 'w') as file:
-                file.write(file_contents)
-            print(f'Successfully wrote file contents to {filename}')
+                file.write(contents)
+        except IOError as e:
+            print(f"An error occurred while writing to the file: {e}")
         except Exception as e:
-            print(f'An error occurred while writing file contents: {e}')
+            print(f"An unexpected error occurred: {e}")
 
 
 class CSVParser:
@@ -183,12 +187,12 @@ if __name__ == "__main__":
     csv_file = os.path.join(os.getcwd(), uploaded_fn)
     destination_folder_name = 'MyUploads'
 
-    uploader = GoogleDriveUploader(credentials_file)
-    folder_id = uploader.create_folder(destination_folder_name)
-    file_id = uploader.upload_file(csv_file, uploaded_fn, folder_id)
+    gci = GoogleCloudInterface(credentials_file)
+    folder_id = gci.create_folder(destination_folder_name)
+    file_id = gci.upload_file(csv_file, uploaded_fn, folder_id)
+
     downloaded_fn = "downloaded_file.csv"
-    uploader.write_file_contents(
-        uploader.get_file_contents(uploaded_fn), downloaded_fn)
+    IOHandler.write_file_contents(downloaded_fn, gci.get_file_contents(uploaded_fn))
 
     parser = CSVParser(downloaded_fn)
     parser.parse_csv()
