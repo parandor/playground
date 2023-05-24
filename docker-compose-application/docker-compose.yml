@@ -29,6 +29,7 @@ services:
       - influxdb_data:/var/lib/influxdb
   chronograf:
     image: chronograf:1.8-alpine
+    restart: always
     ports:
       - "8888:8888"
     depends_on:
