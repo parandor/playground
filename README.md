@@ -7,3 +7,7 @@ This n that
 Run the following to install required libraries:
 
 `pip install google-api-python-client`
+
+## Test
+
+`pip install numpy`
