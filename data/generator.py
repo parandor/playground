@@ -4,16 +4,19 @@ import matplotlib.pyplot as plt
 
 class DataGenerator:
     """
-    Class for generating sample test data in the shape of a sideways S curve with added noise.
+    Class for generating sample test data in the shape of a sideways S curve \
+    with added noise.
     Example usage:
         data_generator = DataGenerator(
-            num_points=100, start_value=40, middle_value=25, end_value=20, noise_factor=0.2)
+            num_points=100, start_value=40, middle_value=25, end_value=20, \
+            noise_factor=0.2)
         data = data_generator.generate_data()
         x_values, y_values = data
         data_generator.plot_data(x_values, y_values)
     """
 
-    def __init__(self, num_points=100, start_value=40, middle_value=25, end_value=20, noise_factor=0.3):
+    def __init__(self, num_points=100, start_value=40, middle_value=25,
+                 end_value=20, noise_factor=0.3):
         """
         Initialize the DataGenerator.
 
