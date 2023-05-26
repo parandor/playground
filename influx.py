@@ -29,7 +29,7 @@ class InfluxDBSender:
 # Example usage:
 if __name__ == '__main__':
     # Configure your InfluxDB connection parameters
-    host = 'localhost'
+    host = '192.168.1.233'
     port = '8086'
     username = 'admin'
     password = 'admin'
@@ -44,9 +44,9 @@ if __name__ == '__main__':
     # Define the data points you want to send
     data = [
         {
-            "measurement": "temperature",
+            "measurement": "distance",
             "tags": {
-                "location": "room1"
+                "location": "desk"
             },
             "fields": {
                 "value": 25.0
