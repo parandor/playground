@@ -1,7 +1,7 @@
 import numpy as np
 
 from data.generator import DataGenerator
-from detection.detect import TroughDetector
+from detection.detector import TroughDetector
 
 data_generator = DataGenerator(
     num_points=100, start_value=40, middle_value=25, end_value=20,

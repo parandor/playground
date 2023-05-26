@@ -1,10 +1,14 @@
 import RPi.GPIO as GPIO
 import time
+from collections import deque
+import numpy as np
 
 class UltrasonicSensor:
     def __init__(self, trigger_pin, echo_pin):
         self.trigger_pin = trigger_pin
         self.echo_pin = echo_pin
+        self.buffer_size = 20
+        self.distance_buffer = deque(maxlen=self.buffer_size)
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.trigger_pin, GPIO.OUT)
@@ -41,35 +45,15 @@ class UltrasonicSensor:
 
         if len(distances) > 0:
             average = sum(distances) / len(distances)
-            return average
-        else:
-            return None
+            self.distance_buffer.append(average)
+
+    # def get_distance_buffer(self):
+    #     return list(self.distance_buffer)
+
+    def get_distance_buffer(self):
+        distance_array = np.array(self.distance_buffer)
+        x_indices = np.arange(len(distance_array))
+        return np.column_stack((x_indices, distance_array))
 
     def cleanup(self):
         GPIO.cleanup()
-
-# Example usage
-try:
-    trigger_pin = 22
-    echo_pin = 19
-
-    sensor = UltrasonicSensor(trigger_pin, echo_pin)
-    num_readings = 5
-    while True:
-        try:
-            average_dist = sensor.average_distance(num_readings)        
-            if average_dist is not None:
-                print(f"Distance: {average_dist:.1f} cm")
-            else:
-                print("No readings available.")
-            time.sleep(0.5)
-        except KeyboardInterrupt:
-            print("Measurement interrupted.")
-            break
-    
-except Exception as e:
-    print("Error:", str(e))
-
-finally:
-    if 'sensor' in locals():
-        sensor.cleanup()
