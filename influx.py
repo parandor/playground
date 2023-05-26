@@ -3,7 +3,8 @@ from influxdb import InfluxDBClient
 
 class InfluxDBSender:
     def __init__(self, host, port, username, password, database):
-        self.client = InfluxDBClient(host=host, port=port, username=username, password=password)
+        self.client = InfluxDBClient(host=host, port=port, username=username,
+                                     password=password)
         self.database = database
 
     def connect(self):

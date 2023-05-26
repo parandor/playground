@@ -159,7 +159,8 @@ class PeakDetector:
         for i in range(len(self.series)):
             window_start = max(0, i - window_size + 1)
             window_end = i + 1
-            window_values = [item for item in self.series[window_start:window_end]]
+            window_values = [
+                item for item in self.series[window_start:window_end]]
             window_average = sum(window_values) / len(window_values)
             smoothed_series.append(window_average)
         return smoothed_series
@@ -167,14 +168,16 @@ class PeakDetector:
     def find_peaks(self):
         peaks = []
         for i in range(1, len(self.series) - 1):
-            if self.series[i] > self.series[i - 1] and self.series[i] > self.series[i + 1]:
+            if self.series[i] > self.series[i - 1] and \
+                    self.series[i] > self.series[i + 1]:
                 peaks.append(self.series[i])
         return peaks
 
     def find_troughs(self):
         troughs = []
         for i in range(1, len(self.series) - 1):
-            if self.series[i] < self.series[i - 1] and self.series[i] < self.series[i + 1]:
+            if self.series[i] < self.series[i - 1] and \
+                    self.series[i] < self.series[i + 1]:
                 troughs.append(self.series[i])
         return troughs
 
@@ -192,7 +195,8 @@ if __name__ == "__main__":
     file_id = gci.upload_file(csv_file, uploaded_fn, folder_id)
 
     downloaded_fn = "downloaded_file.csv"
-    IOHandler.write_file_contents(downloaded_fn, gci.get_file_contents(uploaded_fn))
+    IOHandler.write_file_contents(
+        downloaded_fn, gci.get_file_contents(uploaded_fn))
 
     parser = CSVParser(downloaded_fn)
     parser.parse_csv()
