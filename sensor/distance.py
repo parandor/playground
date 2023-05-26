@@ -8,6 +8,7 @@ class UltrasonicSensor:
         self.trigger_pin = trigger_pin
         self.echo_pin = echo_pin
         self.buffer_size = 20
+        self.num_readings = 3
         self.distance_buffer = deque(maxlen=self.buffer_size)
 
         GPIO.setmode(GPIO.BCM)
@@ -32,23 +33,20 @@ class UltrasonicSensor:
         distance = pulse_duration * 34300 / 2  # Speed of sound is 343 meters/second
         return distance
 
-    def average_distance(self, num_readings):
+    def average_distance(self):
         distances = []
 
-        for _ in range(num_readings):
+        for _ in range(self.num_readings):
             try:
                 distance = self.get_distance()
                 distances.append(distance)
-                time.sleep(0.1)  # Delay between readings to avoid interference
+                time.sleep(0.05)  # Delay between readings to avoid interference
             except Exception as e:
                 print("Error:", str(e))
 
         if len(distances) > 0:
             average = sum(distances) / len(distances)
             self.distance_buffer.append(average)
-
-    # def get_distance_buffer(self):
-    #     return list(self.distance_buffer)
 
     def get_distance_buffer(self):
         distance_array = np.array(self.distance_buffer)
