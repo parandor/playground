@@ -1,5 +1,6 @@
 from sensor.distance import UltrasonicSensor
 from detection.detector import TroughDetector
+from sound.beep import SoundPlayer
 import time
 
 # Example usage
@@ -8,6 +9,8 @@ try:
     echo_pin = 19
 
     sensor = UltrasonicSensor(trigger_pin, echo_pin)
+    # Create an instance of BeepSound
+    player = SoundPlayer()
     while True:
         try:
             sensor.average_distance()    
@@ -24,10 +27,14 @@ try:
             print(" ".join(formatted_values))
 
             # Detect troughs
-            trough_indices = trough_detector.detect_troughs()
-            print("Detected Trough Indices:", trough_indices)
+            trough_detector.detect_troughs()
+            if trough_detector.is_trough_detected():
+                print("Detected Trough Indices:", trough_detector.get_troughs())
+                player.beep()
+            else:
+                player.beep_off()
 
-            time.sleep(0.1)
+            time.sleep(0.05)
                     
         except KeyboardInterrupt:
             print("Measurement interrupted.")

@@ -12,13 +12,16 @@ class TroughDetector:
         self.peak_distance = peak_distance
         self.peak_height = peak_height
         self.peak_width = peak_width
+        self.peak_indices = None
 
     def detect_troughs(self):
         discretized_data = self.discretize_data()
         smoothed_data = self.get_smoothed_data(discretized_data)
         neg_smoothed_data = -smoothed_data
-        peak_indices, _ = find_peaks(neg_smoothed_data, prominence=self.peak_prominence, height=self.peak_height, width=self.peak_width, distance=self.peak_distance)
-        return peak_indices
+        self.peak_indices, _ = find_peaks(neg_smoothed_data, prominence=self.peak_prominence, height=self.peak_height, width=self.peak_width, distance=self.peak_distance)
+
+    def get_troughs(self):
+        return self.peak_indices
 
     def discretize_data(self):
         y_values = self.data[:, 1]
@@ -28,6 +31,9 @@ class TroughDetector:
     def get_smoothed_data(self, data):
         smoothed_data = uniform_filter1d(data, size=self.smoothing_window, mode='reflect')
         return smoothed_data
+
+    def is_trough_detected(self):
+        return len(self.peak_indices) > 0
 
     def plot_troughs(self, trough_indices):
         x_values = self.data[:, 0]
