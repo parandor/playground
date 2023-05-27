@@ -40,7 +40,7 @@ class UltrasonicSensor:
             try:
                 distance = self.get_distance()
                 distances.append(distance)
-                time.sleep(0.05)  # Delay between readings to avoid interference
+                time.sleep(0.02)  # Delay between readings to avoid interference
             except Exception as e:
                 print("Error:", str(e))
 
