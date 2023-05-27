@@ -9,8 +9,7 @@ try:
     echo_pin = 19
 
     sensor = UltrasonicSensor(trigger_pin, echo_pin)
-    # Create an instance of BeepSound
-    player = SoundPlayer()
+    beeper = SoundPlayer()
     while True:
         try:
             sensor.average_distance()    
@@ -30,9 +29,9 @@ try:
             trough_detector.detect_troughs()
             if trough_detector.is_trough_detected():
                 print("Detected Trough Indices:", trough_detector.get_troughs())
-                player.beep()
+                beeper.beep()
             else:
-                player.beep_off()
+                beeper.beep_off()
 
             time.sleep(0.05)
                     
