@@ -4,7 +4,7 @@ from scipy.signal import find_peaks
 from scipy.ndimage.filters import uniform_filter1d
 
 class TroughDetector:
-    def __init__(self, data, discretization_factor=1000, smoothing_window=7, peak_prominence=500, peak_distance=None, peak_height=-12000, peak_width=None):
+    def __init__(self, data, discretization_factor=1000, smoothing_window=7, peak_prominence=500, peak_distance=None, peak_height=-30000, peak_width=None):
         self.data = np.asarray(data)
         self.discretization_factor = discretization_factor
         self.smoothing_window = smoothing_window
@@ -13,16 +13,20 @@ class TroughDetector:
         self.peak_height = peak_height
         self.peak_width = peak_width
         self.peak_indices = None
+        self.filtered_data = None
 
     def detect_troughs(self):
         discretized_data = self.discretize_data()
         smoothed_data = self.get_smoothed_data(discretized_data)
-        filtered_data = self.remove_outliers(smoothed_data)
-        neg_filtered_data = -filtered_data
+        self.filtered_data = self.remove_outliers(smoothed_data)
+        neg_filtered_data = -self.filtered_data
         self.peak_indices, _ = find_peaks(neg_filtered_data, prominence=self.peak_prominence, height=self.peak_height, width=self.peak_width, distance=self.peak_distance)
 
     def get_troughs(self):
         return self.peak_indices
+    
+    def get_filtered_data(self):
+        return self.filtered_data
 
     def discretize_data(self):
         y_values = self.data[:, 1]
@@ -33,8 +37,8 @@ class TroughDetector:
         smoothed_data = uniform_filter1d(data, size=self.smoothing_window, mode='reflect')
         return smoothed_data
 
-    def remove_outliers(self, data, window_size=5, threshold=3.5):
-        smoothed_data = uniform_filter1d(data, size=window_size, mode='reflect')
+    def remove_outliers(self, data, threshold=3.5):
+        smoothed_data = self.get_smoothed_data(data)
         diff = np.abs(smoothed_data[1:] - smoothed_data[:-1])
         median_diff = np.median(diff)
         mad = np.median(np.abs(diff - median_diff))
