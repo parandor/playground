@@ -1,6 +1,8 @@
 import os
 import csv
 
+from file.writer import IOHandler
+
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
 from google.oauth2 import service_account
@@ -99,19 +101,6 @@ class GoogleCloudInterface:
 
     def print_file_contents(self, file_name):
         print(self.get_file_contents(file_name))
-
-
-class IOHandler:
-    @staticmethod
-    def write_file_contents(filename, contents):
-        try:
-            with open(filename, 'w') as file:
-                file.write(contents)
-        except IOError as e:
-            print(f"An error occurred while writing to the file: {e}")
-        except Exception as e:
-            print(f"An unexpected error occurred: {e}")
-
 
 class CSVParser:
     def __init__(self, file_path):

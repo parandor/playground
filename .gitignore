@@ -1,3 +1,4 @@
 /creds*
 downloaded_file.csv
 *.pyc
+sensor_data.csv

@@ -4,10 +4,10 @@ from collections import deque
 import numpy as np
 
 class UltrasonicSensor:
-    def __init__(self, trigger_pin, echo_pin):
+    def __init__(self, trigger_pin, echo_pin, buf_size):
         self.trigger_pin = trigger_pin
         self.echo_pin = echo_pin
-        self.buffer_size = 20
+        self.buffer_size = buf_size
         self.num_readings = 3
         self.distance_buffer = deque(maxlen=self.buffer_size)
 

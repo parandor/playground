@@ -45,7 +45,9 @@ class TroughDetector:
         z_scores = 0.6745 * (diff - median_diff) / mad
         outliers = np.where(np.abs(z_scores) > threshold)[0]
         filtered_data = np.copy(data)
-        filtered_data[outliers+1] = np.nan
+        for idx in outliers:
+            if idx > 0 and idx < len(filtered_data) - 2:
+                filtered_data[idx + 1] = (filtered_data[idx] + filtered_data[idx + 2]) / 2  # Replace outlier with average
         return filtered_data
 
     def is_trough_detected(self):
