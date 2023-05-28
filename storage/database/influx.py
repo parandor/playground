@@ -1,4 +1,6 @@
+from datetime import datetime
 from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError
 
 
 class InfluxDBSender:
@@ -13,14 +15,25 @@ class InfluxDBSender:
             print("Connected to InfluxDB database:", self.database)
         except Exception as e:
             print("Failed to connect to InfluxDB:", str(e))
-
-    def send_data(self, data):
+            
+    def send_data(self, measurement, tags, fields):
+        # Convert the timestamp to the InfluxDB format
+        t_now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')
+        data = [
+            {
+                "measurement": measurement,
+                "time": t_now,
+                "tags": tags,
+                "fields": fields
+            }
+        ]
         try:
             self.client.write_points(data)
-            print("Data sent successfully")
-        except Exception as e:
+        except InfluxDBClientError as e:
             print("Failed to send data to InfluxDB:", str(e))
-
+        except Exception as e:
+            print("An unexpected error occurred:", str(e))
+            
     def close(self):
         self.client.close()
         print("Connection to InfluxDB closed")
@@ -41,21 +54,20 @@ if __name__ == '__main__':
     # Connect to the InfluxDB server
     sender.connect()
 
-    # Define the data points you want to send
-    data = [
-        {
-            "measurement": "distance",
-            "tags": {
-                "location": "desk"
-            },
-            "fields": {
-                "value": 25.0
-            }
-        }
-    ]
-
+    # Send the data associated with the sensor
+    data_measurement = "sensors"
+    data_tags = {
+        "sensor_id": "HC-SR04_asdlkjasld_aksjdak",
+        "type": "distance",
+        "location": "Peter's office"
+    }
+    data_fields = {
+        "field1": 1,
+        "field2": 2
+    }
+    
     # Send the data to the InfluxDB server
-    sender.send_data(data)
+    sender.send_data(data_measurement, data_tags, data_fields)
 
     # Close the connection
     sender.close()

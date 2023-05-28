@@ -15,7 +15,7 @@ class IOHandler:
     def write_numpy(filename, array):
         try:
             with open(filename, 'w') as file:
-                np.savetxt(file, array, fmt='%d')
+                np.savetxt(file, array, fmt='%0.4f')
         except IOError as e:
             print(f"An error occurred while writing to the file: {e}")
         except Exception as e:

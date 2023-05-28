@@ -16,7 +16,7 @@ class TroughDetector:
         self.filtered_data = None
 
     def detect_troughs(self):
-        discretized_data = self.discretize_data()
+        discretized_data = self.discretize_data(self.data)
         smoothed_data = self.get_smoothed_data(discretized_data)
         self.filtered_data = self.remove_outliers(smoothed_data)
         neg_filtered_data = -self.filtered_data
@@ -28,8 +28,8 @@ class TroughDetector:
     def get_filtered_data(self):
         return self.filtered_data
 
-    def discretize_data(self):
-        y_values = self.data[:, 1]
+    def discretize_data(self, data):
+        y_values = data[:, 1]
         discretized_data = np.round(y_values * self.discretization_factor)
         return discretized_data
 
