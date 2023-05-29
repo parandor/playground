@@ -1,10 +1,10 @@
+import time
+
 from detection.detector import TroughDetector
 from file.writer import IOHandler
-from sensor.distance import UltrasonicSensor
+from sensor.hc_sr04 import UltrasonicSensor
 from sound.beep import SoundPlayer
 from storage.database.influx import InfluxDBSender
-import time
-import uuid
 
 
 # Example usage
@@ -13,9 +13,9 @@ try:
     echo_pin = 19
     buf_size = 2000
     filename = "sensor_data.csv"
-    sensor_id = "HC-SR04_EM78P153A_" + str(uuid.uuid4())
+    sensor_id = "HC-SR04_EM78P153A"
 
-    sensor = UltrasonicSensor(trigger_pin, echo_pin, buf_size, sensor_id)
+    sensor = UltrasonicSensor(trigger_pin, echo_pin, buf_size, sensor_id)   
     beeper = SoundPlayer()
     
     # Configure your InfluxDB connection parameters

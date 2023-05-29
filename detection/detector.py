@@ -40,6 +40,8 @@ class TroughDetector:
     def remove_outliers(self, data, threshold=3.5):
         smoothed_data = self.get_smoothed_data(data)
         diff = np.abs(smoothed_data[1:] - smoothed_data[:-1])
+        if len(diff) < 2:
+            return data
         median_diff = np.median(diff)
         mad = np.median(np.abs(diff - median_diff))
         z_scores = 0.6745 * (diff - median_diff) / mad

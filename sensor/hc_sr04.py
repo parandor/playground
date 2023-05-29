@@ -16,6 +16,14 @@ class UltrasonicSensor:
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.trigger_pin, GPIO.OUT)
         GPIO.setup(self.echo_pin, GPIO.IN)
+        
+    def is_connected(self):
+        GPIO.output(self.trigger_pin, GPIO.HIGH)
+        GPIO.output(self.trigger_pin, GPIO.LOW)
+
+        if GPIO.input(self.echo_pin):
+            return True
+        return False
 
     def _get_distance(self):
         GPIO.output(self.trigger_pin, True)
