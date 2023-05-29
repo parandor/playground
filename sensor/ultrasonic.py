@@ -1,3 +1,4 @@
+from datetime import datetime
 import RPi.GPIO as GPIO
 import time
 from collections import deque
@@ -12,6 +13,7 @@ class UltrasonicSensor:
         self.distance_buffer = deque(maxlen=self.buffer_size)
         self.sensor_id = sensor_id
         self.average = 0.0
+        self.timestamps = deque(maxlen=self.buffer_size)
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.trigger_pin, GPIO.OUT)
@@ -57,11 +59,15 @@ class UltrasonicSensor:
         if len(distances) > 0:
             self.average = sum(distances) / len(distances)
             self.distance_buffer.append(self.average)
+            self.timestamps.append(datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))
 
     def get_distance_buffer(self):
         distance_array = np.array(self.distance_buffer)
         x_indices = np.arange(len(distance_array))
         return np.column_stack((x_indices, distance_array))
+    
+    def get_timestamps(self):
+        return self.timestamps
     
     def get_average_distance(self):
         return self.average

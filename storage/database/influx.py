@@ -34,6 +34,21 @@ class InfluxDBSender:
         except Exception as e:
             print("An unexpected error occurred:", str(e))
             
+    def send_data(self, measurement, tags, field, timestamp):
+        data_point = {
+            "measurement": measurement,
+            "time": timestamp,
+            "tags": tags,
+            "fields": {"value": field}
+        }
+
+        try:
+            self.client.write_points([data_point])
+        except InfluxDBClientError as e:
+            print("Failed to send data to InfluxDB:", str(e))
+        except Exception as e:
+            print("An unexpected error occurred:", str(e))
+            
     def close(self):
         self.client.close()
         print("Connection to InfluxDB closed")
