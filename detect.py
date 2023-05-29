@@ -12,7 +12,6 @@ try:
     trigger_pin = 22
     echo_pin = 19
     buf_size = 2000
-    filename = "sensor_data.csv"
     sensor_id = "HC-SR04_EM78P153A"
 
     sensor = UltrasonicSensor(trigger_pin, echo_pin, buf_size, sensor_id)   
