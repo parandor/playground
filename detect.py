@@ -1,7 +1,6 @@
 import time
 
 from detection.detector import TroughDetector
-from file.writer import IOHandler
 from sensor.ultrasonic import UltrasonicSensor
 from sound.beep import SoundPlayer
 from storage.database.influx import InfluxDBSender
