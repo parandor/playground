@@ -1,10 +1,12 @@
-import time
 import board
 import adafruit_vl53l1x
+from sensors.sensor_base import SensorBase
 
-class DistanceSensor:
-    def __init__(self):
-        self.i2c = board.I2C()  # uses board.SCL and board.SDA
+
+class DistanceSensor(SensorBase):
+    def __init__(self, buffer_size):
+        super().__init__(buffer_size=buffer_size)
+        self.i2c = board.I2C()
         self.vl53 = adafruit_vl53l1x.VL53L1X(self.i2c)
         self.vl53.distance_mode = 1
         self.vl53.timing_budget = 100
@@ -33,6 +35,7 @@ class DistanceSensor:
         if self.vl53.data_ready:
             distance = self.vl53.distance
             self.vl53.clear_interrupt()
+            self.update_average(distance)
             return distance
         else:
             return None
@@ -41,16 +44,16 @@ class DistanceSensor:
         self.vl53.stop_ranging()
         self.i2c.deinit()
 
-# Example usage
-sensor = DistanceSensor()
-sensor.print_info()
-sensor.start_ranging()
+# # Example usage
+# sensor = DistanceSensor()
+# sensor.print_info()
+# sensor.start_ranging()
 
-try:
-    while True:
-        distance = sensor.get_distance()
-        if distance is not None:
-            print("Distance: {} cm".format(distance))
-        time.sleep(0.2)
-except KeyboardInterrupt:
-    sensor.cleanup()
+# try:
+#     while True:
+#         distance = sensor.get_distance()
+#         if distance is not None:
+#             print("Distance: {} cm".format(distance))
+#         time.sleep(0.2)
+# except KeyboardInterrupt:
+#     sensor.cleanup()
