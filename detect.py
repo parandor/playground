@@ -1,7 +1,7 @@
 import time
 
 from detection.detector import TroughDetector
-from sensor.ultrasonic import UltrasonicSensor
+from sensors.distance.ultrasonic.gpio.sensor import UltrasonicSensor
 from sound.beep import SoundPlayer
 from storage.database.influx import InfluxDBSender
 
@@ -33,7 +33,6 @@ try:
         try:
             sensor.average_distance()    
             buf = sensor.get_distance_buffer()
-            avg = sensor.get_average_distance()    
 
             data_measurement = "sensors"
             data_location = "Peter's office"
