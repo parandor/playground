@@ -3,11 +3,12 @@ from collections import deque
 import numpy as np
 
 class SensorBase:
-    def __init__(self, buffer_size):
+    def __init__(self, buffer_size, sensor_id):
         self.buffer_size = buffer_size
         self.distance_buffer = deque(maxlen=self.buffer_size)
         self.timestamps = deque(maxlen=self.buffer_size)
         self.average = 0.0
+        self.sensor_id = sensor_id
 
     def update_average(self, distance):
         self.distance_buffer.append(distance)

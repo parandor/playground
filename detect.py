@@ -7,17 +7,15 @@ from sound.beep import SoundPlayer
 from storage.database.influx import InfluxDBSender
 
 
-# Example usage
 try:
     # trigger_pin = 22
     # echo_pin = 19
-    buf_size = 2000
     # sensor_id = "HC-SR04_EM78P153A"
-
     # sensor = UltrasonicSensor(trigger_pin, echo_pin, buf_size, sensor_id)   
     
     sensor_id = "VL53L1X_MODELID_0xEA"
-    sensor = DistanceSensor(buf_size)
+    buf_size = 2000
+    sensor = DistanceSensor(buf_size, sensor_id)
     sensor.print_info()
     sensor.start_ranging()
 

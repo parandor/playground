@@ -4,8 +4,8 @@ from sensors.sensor_base import SensorBase
 
 
 class DistanceSensor(SensorBase):
-    def __init__(self, buffer_size):
-        super().__init__(buffer_size=buffer_size)
+    def __init__(self, buffer_size, sensor_id):
+        super().__init__(buffer_size=buffer_size, sensor_id=sensor_id)
         self.i2c = board.I2C()
         self.vl53 = adafruit_vl53l1x.VL53L1X(self.i2c)
         self.vl53.distance_mode = 1
@@ -43,17 +43,3 @@ class DistanceSensor(SensorBase):
     def cleanup(self):
         self.vl53.stop_ranging()
         self.i2c.deinit()
-
-# # Example usage
-# sensor = DistanceSensor()
-# sensor.print_info()
-# sensor.start_ranging()
-
-# try:
-#     while True:
-#         distance = sensor.get_distance()
-#         if distance is not None:
-#             print("Distance: {} cm".format(distance))
-#         time.sleep(0.2)
-# except KeyboardInterrupt:
-#     sensor.cleanup()
