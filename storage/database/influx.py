@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
@@ -48,41 +48,25 @@ class InfluxDBSender:
             print("Failed to send data to InfluxDB:", str(e))
         except Exception as e:
             print("An unexpected error occurred:", str(e))
+
+    def query_last_2_days(self):
+        end_time = datetime.utcnow()  # Current UTC time
+        start_time = end_time - timedelta(days=2)
+
+        query = f'SELECT * FROM /.*/ WHERE time >= \'{start_time.strftime("%Y-%m-%dT%H:%M:%SZ")}\' AND time <= \'{end_time.strftime("%Y-%m-%dT%H:%M:%SZ")}\''
+        result = self.client.query(query)
+        return result.get_points()
+
+    def get_mean_value_in_time_range(self, measurement, field, tag_conditions, time_range, group_interval):
+        # Build the InfluxDB query
+        conditions = [f'("{tag}"::tag = \'{value}\')' for tag, value in tag_conditions.items()]
+        query = f'SELECT mean("{field}") FROM "{measurement}" WHERE {" AND ".join(conditions)}'
+        query += f' AND time >= now() - {time_range} and time <= now() GROUP BY time({group_interval}) fill(null)'
             
+        result = self.client.query(query)
+        return result.get_points()
+
     def close(self):
         self.client.close()
         print("Connection to InfluxDB closed")
 
-
-# Example usage:
-if __name__ == '__main__':
-    # Configure your InfluxDB connection parameters
-    host = '192.168.1.233'
-    port = '8086'
-    username = 'admin'
-    password = 'admin'
-    database = 'influx'
-
-    # Create an instance of the InfluxDBSender class
-    sender = InfluxDBSender(host, port, username, password, database)
-
-    # Connect to the InfluxDB server
-    sender.connect()
-
-    # Send the data associated with the sensor
-    data_measurement = "sensors"
-    data_tags = {
-        "sensor_id": "HC-SR04_asdlkjasld_aksjdak",
-        "type": "distance",
-        "location": "Peter's office"
-    }
-    data_fields = {
-        "field1": 1,
-        "field2": 2
-    }
-    
-    # Send the data to the InfluxDB server
-    sender.send_data(data_measurement, data_tags, data_fields)
-
-    # Close the connection
-    sender.close()

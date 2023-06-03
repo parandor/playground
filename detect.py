@@ -77,7 +77,7 @@ try:
             else:
                 beeper.beep_off()
 
-            time.sleep(1)
+            time.sleep(10)
     
         except KeyboardInterrupt:
             print("Measurement interrupted.")
