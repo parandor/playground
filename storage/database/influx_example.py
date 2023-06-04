@@ -1,4 +1,6 @@
 from storage.database.influx import InfluxDBSender
+from detection.detector import TroughDetector
+from data.convert import Converter
 
 # Example usage:
 if __name__ == '__main__':
@@ -21,11 +23,12 @@ if __name__ == '__main__':
         'sensor_id': 'VL53L1X_MODELID_0xEA'
     }
     data = sender.get_mean_value_in_time_range("sensors", "value", tag_conditions, '2d', '1m')
+    
+    data_stacked = Converter.to_column_stack(data)
+    detector = TroughDetector(data_stacked)
+    detector.detect_troughs()
+    detector.plot_troughs(detector.get_troughs())
 
-    for point in data:
-        for key in point.keys():
-            if point['mean']:
-                print(point['time'] + ", " + str(point['mean']))     
         
     # # Send the data associated with the sensor
     # data_measurement = "sensors"

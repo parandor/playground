@@ -67,3 +67,5 @@ class TroughDetector:
         plt.title('Trough Detection')
         plt.legend()
         plt.show()
+        plt.savefig('trough_plot.png')
+        plt.close()
