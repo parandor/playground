@@ -1,6 +1,6 @@
 from datetime import datetime
 from collections import deque
-import numpy as np
+from data.convert import Converter
 
 class SensorBase:
     def __init__(self, buffer_size, sensor_id):
@@ -16,9 +16,7 @@ class SensorBase:
         self.average = sum(self.distance_buffer) / len(self.distance_buffer)
 
     def get_distance_buffer(self):
-        distance_array = np.array(self.distance_buffer)
-        x_indices = np.arange(len(distance_array))
-        return np.column_stack((x_indices, distance_array))
+        return Converter.to_col_stack(self.distance_buffer)
 
     def get_timestamps(self):
         return self.timestamps

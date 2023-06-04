@@ -1,18 +1,13 @@
 import time
 
 from detection.detector import TroughDetector
-from sensors.distance.ultrasonic.gpio.sensor import UltrasonicSensor
 from sensors.distance.tof.board.sensor import DistanceSensor
 from sound.beep import SoundPlayer
 from storage.database.influx import InfluxDBSender
 
 
 try:
-    # trigger_pin = 22
-    # echo_pin = 19
-    # sensor_id = "HC-SR04_EM78P153A"
-    # sensor = UltrasonicSensor(trigger_pin, echo_pin, buf_size, sensor_id)   
-    
+
     sensor_id = "VL53L1X_MODELID_0xEA"
     buf_size = 2000
     sensor = DistanceSensor(buf_size, sensor_id)

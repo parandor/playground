@@ -36,6 +36,7 @@ class Filter:
         self.filtered_data = np.copy(data)
         for idx in outliers:
             if idx > 0 and idx < len(self.filtered_data) - 2:
-                self.filtered_data[idx] = (self.filtered_data[idx] - 1 + self.filtered_data[idx + 1]) / 2  # Replace outlier with average
+                # Replace outlier with average
+                self.filtered_data[idx] = (self.filtered_data[idx] - 1 + self.filtered_data[idx + 1]) / 2  
         
         return self.filtered_data

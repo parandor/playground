@@ -2,6 +2,7 @@ import numpy as np
 from scipy.signal import find_peaks
 from detection.plotter import Plotter
 from detection.filter import Filter
+from data.convert import Converter
 
 class TroughDetector:
     def __init__(self, data, discretization_factor=1000, smoothing_window=7, peak_prominence=500, peak_distance=None, peak_height=-30000, peak_width=None):
@@ -12,6 +13,7 @@ class TroughDetector:
         self.peak_width = peak_width
         self.peak_indices = None
         self.filter = Filter(discretization_factor, smoothing_window)
+        self.label = "Trough"
 
     def detect_troughs(self):
         self.filter.discretize_data(self.data)
@@ -26,11 +28,11 @@ class TroughDetector:
     def is_trough_detected(self):
         return len(self.peak_indices) > 0
 
-    def plot_troughs(self):
-        Plotter.plot_events(self.data, self.peak_indices, "Trough")
+    def plot_troughs_raw(self):
+        Plotter.plot_events(self.data, self.peak_indices, self.label)
 
-    def plot_troughs_on_smoothed(self):
-        Plotter.plot_events(self.filter.smoothed_data, self.peak_indices, "Trough")
+    def plot_troughs_smoothed(self):
+        Plotter.plot_events(Converter.to_col_stack(self.filter.smoothed_data), self.peak_indices, self.label)
 
-    def plot_troughs_on_filtered(self):
-        Plotter.plot_events(self.filter.filtered_data, self.peak_indices, "Trough")
+    def plot_troughs_filtered(self):
+        Plotter.plot_events(Converter.to_col_stack(self.filter.filtered_data), self.peak_indices, self.label)
