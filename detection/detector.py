@@ -16,6 +16,7 @@ class TroughDetector:
         self.label = "Trough"
 
     def detect_troughs(self):
+        # Run filter pipeline first prior to detection
         self.filter.discretize_data(self.data)
         self.filter.smoothe_data(self.filter.discretized_data)
         filtered_data = self.filter.remove_outliers(self.filter.smoothed_data)

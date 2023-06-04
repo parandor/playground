@@ -44,12 +44,13 @@ if __name__ == '__main__':
     
     data_stacked = Converter.to_col_stack_with_mean(data)
     
-    detector = TroughDetector(data_stacked)
-    detector.detect_troughs()
-    detector.plot_troughs_filtered()
+    # detector = TroughDetector(data_stacked)
+    # detector.detect_troughs()
+    # detector.plot_troughs_filtered()
 
-    # roc = RateOfChangeDetector(data_stacked)
-    # indices = roc.detect_decline()
+    roc = RateOfChangeDetector(data_stacked)
+    roc.detect_decline(-18, -14)
+    roc.plot_decline_filtered()
         
     # Send the data associated with the sensor
     # send_sample_data(sender)

@@ -3,6 +3,10 @@ import matplotlib.pyplot as plt
 class Plotter:
     @staticmethod
     def plot_events(data, event_indices, event_label):
+        if len(data) == 0 or len(event_indices) == 0 or not event_label:
+            print("Empty inputs. Cannot plot events.")
+            return
+        
         event_labels = [event_label] * len(event_indices)
         x_values = data[:, 0]
         y_values = data[:, 1]
