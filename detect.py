@@ -39,45 +39,47 @@ try:
             sensor.get_distance()    
             buf = sensor.get_distance_buffer()
 
-            data_measurement = "sensors"
-            data_location = "Peter's office"
-            data_tags = {
-                "location": data_location,
-                "sensor_id": sensor_id,
-                "type": "distance_raw"
-            }
-            for timestamp, value in zip(sensor.get_timestamps(), buf[:, 1]):
-                sender.send_data(data_measurement, data_tags, value, timestamp)
-                
-            detector = TroughDetector(buf)
-            detector.detect_troughs()
+            if buf is not None and len(buf) > 0:
+                data_measurement = "sensors"
+                data_location = "Peter's office"
+                data_tags = {
+                    "location": data_location,
+                    "sensor_id": sensor_id,
+                    "type": "distance_raw"
+                }
+                for timestamp, value in zip(sensor.get_timestamps(), buf[:, 1]):
+                    sender.send_data(data_measurement, data_tags, value, timestamp)
+                    
+                detector = TroughDetector(buf)
+                detector.detect_troughs()
 
-            discretized_data = detector.discretize_data(buf)
-            smoothed_data = detector.get_smoothed_data(discretized_data)
-            data_tags = {
-                "location": data_location,
-                "sensor_id": sensor_id,
-                "type": "distance_smoothed"
-            }
-            for timestamp, value in zip(sensor.get_timestamps(), smoothed_data):
-                sender.send_data(data_measurement, data_tags, value, timestamp)
+                smoothed_data = detector.filter.smoothed_data
+                if smoothed_data is not None and len(smoothed_data) > 0:
+                    data_tags = {
+                        "location": data_location,
+                        "sensor_id": sensor_id,
+                        "type": "distance_smoothed"
+                    }
+                    for timestamp, value in zip(sensor.get_timestamps(), smoothed_data):
+                        sender.send_data(data_measurement, data_tags, value, timestamp)
 
-            filtered_data = detector.get_filtered_data()
-            data_tags = {
-                "location": data_location,
-                "sensor_id": sensor_id,
-                "type": "distance_filtered"
-            }
-            for timestamp, value in zip(sensor.get_timestamps(), filtered_data):
-                sender.send_data(data_measurement, data_tags, value, timestamp)
-  
-            if detector.is_trough_detected():
-                print("Detected Trough Indices:", detector.get_troughs())
-                beeper.beep()
-            else:
-                beeper.beep_off()
+                filtered_data = detector.filter.filtered_data
+                if filtered_data is not None and len(filtered_data) > 0:
+                    data_tags = {
+                        "location": data_location,
+                        "sensor_id": sensor_id,
+                        "type": "distance_filtered"
+                    }
+                    for timestamp, value in zip(sensor.get_timestamps(), filtered_data):
+                        sender.send_data(data_measurement, data_tags, value, timestamp)
+    
+                if detector.is_trough_detected():
+                    print("Detected Trough Indices:", detector.get_troughs())
+                    beeper.beep()
+                else:
+                    beeper.beep_off()
 
-            time.sleep(10)
+            time.sleep(1)
     
         except KeyboardInterrupt:
             print("Measurement interrupted.")

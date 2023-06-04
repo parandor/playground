@@ -23,7 +23,7 @@ trough_indices = trough_detector.detect_troughs()
 print("Detected Trough Indices:", trough_indices)
 
 # Plot data with detected troughs
-trough_detector.plot_troughs(trough_indices)
+trough_detector.plot_troughs()
 
 
 # # Example data
@@ -39,4 +39,4 @@ trough_detector.plot_troughs(trough_indices)
 # print("Detected Trough Indices:", trough_indices)
 
 # # Plot data with detected troughs
-# trough_detector.plot_troughs(trough_indices)
+# trough_detector.plot_troughs()

@@ -1,59 +1,36 @@
 import numpy as np
 from scipy.signal import find_peaks
-from scipy.ndimage.filters import uniform_filter1d
 from detection.plotter import Plotter
+from detection.filter import Filter
 
-class TroughDetector():
+class TroughDetector:
     def __init__(self, data, discretization_factor=1000, smoothing_window=7, peak_prominence=500, peak_distance=None, peak_height=-30000, peak_width=None):
         self.data = np.asarray(data)
-        self.discretization_factor = discretization_factor
-        self.smoothing_window = smoothing_window
         self.peak_prominence = peak_prominence
         self.peak_distance = peak_distance
         self.peak_height = peak_height
         self.peak_width = peak_width
         self.peak_indices = None
-        self.filtered_data = None
+        self.filter = Filter(discretization_factor, smoothing_window)
 
     def detect_troughs(self):
-        discretized_data = self.discretize_data(self.data)
-        smoothed_data = self.get_smoothed_data(discretized_data)
-        self.filtered_data = self.remove_outliers(smoothed_data)
-        neg_filtered_data = -self.filtered_data
+        self.filter.discretize_data(self.data)
+        self.filter.smoothe_data(self.filter.discretized_data)
+        filtered_data = self.filter.remove_outliers(self.filter.smoothed_data)
+        neg_filtered_data = -filtered_data
         self.peak_indices, _ = find_peaks(neg_filtered_data, prominence=self.peak_prominence, height=self.peak_height, width=self.peak_width, distance=self.peak_distance)
 
     def get_troughs(self):
         return self.peak_indices
-    
-    def get_filtered_data(self):
-        return self.filtered_data
-
-    def discretize_data(self, data):
-        y_values = data[:, 1]
-        discretized_data = np.round(y_values * self.discretization_factor)
-        return discretized_data
-
-    def get_smoothed_data(self, data):
-        smoothed_data = uniform_filter1d(data, size=self.smoothing_window, mode='reflect')
-        return smoothed_data
-
-    def remove_outliers(self, data, threshold=3.5):
-        smoothed_data = self.get_smoothed_data(data)
-        diff = np.abs(smoothed_data[1:] - smoothed_data[:-1])
-        if len(diff) < 2:
-            return data
-        median_diff = np.median(diff)
-        mad = np.median(np.abs(diff - median_diff))
-        z_scores = 0.6745 * (diff - median_diff) / mad
-        outliers = np.where(np.abs(z_scores) > threshold)[0]
-        filtered_data = np.copy(data)
-        for idx in outliers:
-            if idx > 0 and idx < len(filtered_data) - 2:
-                filtered_data[idx + 1] = (filtered_data[idx] + filtered_data[idx + 2]) / 2  # Replace outlier with average
-        return filtered_data
 
     def is_trough_detected(self):
         return len(self.peak_indices) > 0
 
     def plot_troughs(self):
-        Plotter.plot_events(self.data, self.peak_indices, ["Trough"])
+        Plotter.plot_events(self.data, self.peak_indices, "Trough")
+
+    def plot_troughs_on_smoothed(self):
+        Plotter.plot_events(self.filter.smoothed_data, self.peak_indices, "Trough")
+
+    def plot_troughs_on_filtered(self):
+        Plotter.plot_events(self.filter.filtered_data, self.peak_indices, "Trough")

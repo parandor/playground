@@ -2,7 +2,8 @@ import matplotlib.pyplot as plt
 
 class Plotter:
     @staticmethod
-    def plot_events(data, event_indices, event_labels):
+    def plot_events(data, event_indices, event_label):
+        event_labels = [event_label] * len(event_indices)
         x_values = data[:, 0]
         y_values = data[:, 1]
 
