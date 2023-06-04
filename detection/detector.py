@@ -1,9 +1,9 @@
-from matplotlib import pyplot as plt
 import numpy as np
 from scipy.signal import find_peaks
 from scipy.ndimage.filters import uniform_filter1d
+from detection.plotter import Plotter
 
-class TroughDetector:
+class TroughDetector():
     def __init__(self, data, discretization_factor=1000, smoothing_window=7, peak_prominence=500, peak_distance=None, peak_height=-30000, peak_width=None):
         self.data = np.asarray(data)
         self.discretization_factor = discretization_factor
@@ -55,17 +55,5 @@ class TroughDetector:
     def is_trough_detected(self):
         return len(self.peak_indices) > 0
 
-    def plot_troughs(self, trough_indices):
-        x_values = self.data[:, 0]
-        y_values = self.data[:, 1]
-
-        plt.plot(x_values, y_values)
-        plt.scatter(x_values[trough_indices],
-                    y_values[trough_indices], c='r', label='Troughs')
-        plt.xlabel('X')
-        plt.ylabel('Y')
-        plt.title('Trough Detection')
-        plt.legend()
-        plt.show()
-        plt.savefig('trough_plot.png')
-        plt.close()
+    def plot_troughs(self):
+        Plotter.plot_events(self.data, self.peak_indices, ["Trough"])

@@ -1,5 +1,6 @@
 from storage.database.influx import InfluxDBSender
 from detection.detector import TroughDetector
+from detection.roc_detector import RateOfChangeDetector
 from data.convert import Converter
 
 # Example usage:
@@ -27,8 +28,10 @@ if __name__ == '__main__':
     data_stacked = Converter.to_column_stack(data)
     detector = TroughDetector(data_stacked)
     detector.detect_troughs()
-    detector.plot_troughs(detector.get_troughs())
+    detector.plot_troughs()
 
+    # roc = RateOfChangeDetector(data_stacked)
+    # indices = roc.detect_decline()
         
     # # Send the data associated with the sensor
     # data_measurement = "sensors"
