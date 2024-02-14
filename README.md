@@ -2,6 +2,9 @@
 
 Distance Sensor Trough Detector Playground 
 
+# Design
+![Design](docs/design_diagram.jpg)
+
 ## Docker
 
 1. influxdb (storage)
